@@ -95,7 +95,9 @@ public enum CommunicationProtocol {
      * the client to update their meeting information by polling for the information that is
      * stored within the system again.
      */
-    PUSH_SERVERSIDE_MEETING_DELETION_NOTIFICATION("PUSH_SERVERSIDE_MEETING_DELETION_NOTIFICATION");
+    PUSH_SERVERSIDE_MEETING_DELETION_NOTIFICATION("PUSH_SERVERSIDE_MEETING_DELETION_NOTIFICATION"),
+    PUSH_SERVERSIDE_MEETING_CONFLICT_RESOLUTION_NOTIFICATION(
+            "PUSH_SERVERSIDE_MEETING_CONFLICT_RESOLUTION_NOTIFICATION");
 
 
     private final String internalMessageAsString;

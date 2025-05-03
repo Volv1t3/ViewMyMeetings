@@ -2,6 +2,7 @@ package com.evolvlabs.SerializationEngine;
 
 import org.msgpack.core.MessagePack;
 import org.msgpack.core.MessagePacker;
+import org.msgpack.core.MessageUnpacker;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -21,7 +22,9 @@ public class SerialCompression {
         try (ByteArrayOutputStream outputStream = new ByteArrayOutputStream()){
             MessagePacker packer = MessagePack.newDefaultPacker(
                     outputStream);
-
+            if (jsonOutput == null){
+                return null;
+            }
             packer.packString(jsonOutput);
             packer.close();
             return outputStream.toByteArray();
@@ -30,5 +33,18 @@ public class SerialCompression {
             e.printStackTrace();
             return null;
         }
+    }
+
+    public static String unpackSerializedStringFromByteArray(byte[] byteArray){
+        if (byteArray != null){
+            try(MessageUnpacker unpacker = MessagePack.newDefaultUnpacker(byteArray)){
+                return unpacker.unpackString();
+            } catch (IOException e) {
+                System.out.println("Error while deserializing the string from MessagePack");
+                e.printStackTrace();
+                return null;
+            }
+        }
+        return null;
     }
 }

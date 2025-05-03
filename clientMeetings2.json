@@ -1,0 +1,34 @@
+[
+  {
+    "meetingTopic": "T1Test",
+    "meetingOrganizer": {
+      "meetingOrganizerID": "C01A",
+      "meetingOrganizerName": "Santiago"
+    },
+    "meetingPlace": "T1",
+    "meetingInviteeList": [
+      {
+        "meetingInviteeID": "C02A",
+        "meetingInviteeName": "Marco"
+      }
+    ],
+    "meetingStartTime": 1741042800000,
+    "meetingEndTime": 1741046400000
+  },
+  {
+    "meetingTopic": "T1Error",
+    "meetingOrganizer": {
+      "meetingOrganizerID": "C02A",
+      "meetingOrganizerName": "Marco"
+    },
+    "meetingPlace": "T1",
+    "meetingInviteeList": [
+      {
+        "meetingInviteeID": "C01A",
+        "meetingInviteeName": "Santiago"
+      }
+    ],
+    "meetingStartTime": 1741044600000,
+    "meetingEndTime": 1741045500000
+  }
+]

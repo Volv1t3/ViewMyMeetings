@@ -314,29 +314,22 @@ public class Meeting implements Comparable<Meeting>{
 
     /*! Static methods for email revision*/
     public static boolean isOtherMeetingOverlappingThisMeeting(Meeting otherMeeting, Meeting thisMeeting) {
-        //? 1. First, we have to grab the distances between each of the meetings, this allows us
-        // to analyze the start time, end time and duration to find overlaps
-        long startTimeDifference =
-                otherMeeting.getStartTime().getTime() - thisMeeting.getStartTime().getTime();
-        long endTimeDifference =
-                otherMeeting.getEndTime().getTime() - thisMeeting.getEndTime().getTime();
-        long thisMeetingDuration =
-                thisMeeting.getEndTime().getTime() - thisMeeting.getStartTime().getTime();
-
-        //? 2. Now we can check if there are overlaps on the start times, there will be an
-        // overlap if for example: the meetings start time this - other produces a non negative
-        // value
-        boolean thisMeetingStartsWithinOtherMeeting =
-                startTimeDifference > 0 && startTimeDifference < thisMeetingDuration;
-        boolean thisMeetingStartAndEndAsOtherMeeting =
-                startTimeDifference == 0 && endTimeDifference == 0;
-        boolean thisMeetingEndsAfterOtherMeeting =
-                endTimeDifference < 0;
-
-
-        return thisMeetingStartAndEndAsOtherMeeting || thisMeetingStartsWithinOtherMeeting ||
-                (startTimeDifference > 0 && thisMeetingEndsAfterOtherMeeting);
+        return otherMeeting.getStartTime().before(thisMeeting.getEndTime()) &&
+                otherMeeting.getEndTime().after(thisMeeting.getStartTime());
     }
 
+    public static void main(String[] args) {
+        //? 1. Test for conflict Two meetings
+        Meeting meeting = new Meeting();
+        meeting.setStartTime(new Date(1746313200000l));
+        meeting.setEndTime(new Date(1746316800000l));
+        System.out.println(meeting.toString());
+        Meeting meeting1 = new Meeting();
+        meeting1.setStartTime(new Date(1742685780000l));
+        meeting1.setEndTime(new Date(1742686380000l));
+        System.out.println(meeting1.toString());
 
+
+        System.out.println(isOtherMeetingOverlappingThisMeeting(meeting, meeting1));
+    }
 }
