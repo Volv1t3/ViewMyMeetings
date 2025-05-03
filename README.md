@@ -130,8 +130,8 @@ project all on its own!
 <p>The application is available as Docker images for easy deployment and usage. The Docker Hub repository contains all necessary images:</p>
 
 <ul>
-<li><b>Server Image:</b> <code>arellanosantiago/view-my-meetings:server-latest</code></li>
-<li><b>Client Image:</b> <code>arellanosantiago/view-my-meetings:client-latest</code></li>
+<li><b>Server Image:</b> <a href="https://hub.docker.com/repository/docker/arellanosantiago/view-my-meetings/tags/server-latest/sha256:d93fa26d3f81634c5e23e4e9426ed01cf98784546d6cd05a08fe41289ab1d361">arellanosantiago/view-my-meetings:server-latest</a></li>
+<li><b>Client Image:</b> <a href="https://hub.docker.com/repository/docker/arellanosantiago/view-my-meetings/tags/client-latest/sha256:04104f1ea5a6b8f731b9e47bc0129638a5ac1aec161571273a91afe6c5f87016">arellanosantiago/view-my-meetings:client-latest</a></li>
 </ul>
 
 <p>To deploy using Docker:</p>

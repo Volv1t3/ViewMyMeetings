@@ -50,7 +50,7 @@ public class ViewMyMeetingsServer {
      * Constructor with default port
      */
     public ViewMyMeetingsServer() {
-        this(DEFAULT_PORT);
+        this(DEFAULT_PORT, CONFIG_FILE);
     }
 
     /**
@@ -58,7 +58,7 @@ public class ViewMyMeetingsServer {
      *
      * @param port The port to listen on
      */
-    public ViewMyMeetingsServer(int port) {
+    public ViewMyMeetingsServer(int port, String configPath) {
         this.port = port;
         this.clientHandlerPool = Executors.newCachedThreadPool();
         this.connectedClients = new ConcurrentHashMap<>();
@@ -68,7 +68,7 @@ public class ViewMyMeetingsServer {
         this.inviteeMeetings = new HashMap<>();
         this.conflictMeetings = new HashMap<>();
         this.uuidToPort = new HashMap<>();
-        loadClientCredentials();
+        loadClientCredentials(configPath);
         loadMeetings();
     }
 
@@ -274,36 +274,64 @@ public class ViewMyMeetingsServer {
      * @see #clientCredentials
      * @see #uuidToPort
      */
-    private void loadClientCredentials() {
-        try (InputStream input = getClass().getClassLoader().getResourceAsStream(CONFIG_FILE)) {
-            if (input == null) {
-                System.err.println("Unable to find " + CONFIG_FILE);
-                return;
-            }
-
-            Properties prop = new Properties();
-            prop.load(input);
-
-            int clientCount = Integer.parseInt(prop.getProperty("clients.count", "0"));
-            System.out.println("Loading credentials for " + clientCount + " clients");
-
-            for (int i = 0; i < clientCount; i++) {
-                String id = prop.getProperty("clients." + i + ".id");
-                String password = prop.getProperty("clients." + i + ".password");
-                String port = prop.getProperty("clients." + i + ".update_port");
-                MEETINGS_FILE = prop.getProperty("server.storage.location");
-
-                if (id != null && password != null && port != null) {
-                    clientCredentials.put(id, password);
-                    uuidToPort.put(id, Integer.parseInt(port));
-                    System.out.println("Loaded credentials for client ID: " + id);
+    private void loadClientCredentials(String configPath) {
+        if (configPath.equals(CONFIG_FILE)){
+            try (InputStream input = getClass().getClassLoader().getResourceAsStream(CONFIG_FILE)) {
+                if (input == null) {
+                    System.err.println("Unable to find " + CONFIG_FILE);
+                    return;
                 }
-            }
 
-            System.out.println("Loaded " + clientCredentials.size() + " client credentials");
-        } catch (IOException e) {
-            System.err.println("Error loading client credentials: " + e.getMessage());
+                Properties prop = new Properties();
+                prop.load(input);
+
+                int clientCount = Integer.parseInt(prop.getProperty("clients.count", "0"));
+                System.out.println("Loading credentials for " + clientCount + " clients");
+
+                for (int i = 0; i < clientCount; i++) {
+                    String id = prop.getProperty("clients." + i + ".id");
+                    String password = prop.getProperty("clients." + i + ".password");
+                    String port = prop.getProperty("clients." + i + ".update_port");
+                    MEETINGS_FILE = prop.getProperty("server.storage.location");
+
+                    if (id != null && password != null && port != null) {
+                        clientCredentials.put(id, password);
+                        uuidToPort.put(id, Integer.parseInt(port));
+                        System.out.println("Loaded credentials for client ID: " + id);
+                    }
+                }
+
+                System.out.println("Loaded " + clientCredentials.size() + " client credentials");
+            } catch (IOException e) {
+                System.err.println("Error loading client credentials: " + e.getMessage());
+            }
+        } else {
+            try (FileReader reader = new FileReader(configPath)) {
+                Properties prop = new Properties();
+                prop.load(reader);
+
+                int clientCount = Integer.parseInt(prop.getProperty("clients.count", "0"));
+                System.out.println("Loading credentials for " + clientCount + " clients");
+
+                for (int i = 0; i < clientCount; i++) {
+                    String id = prop.getProperty("clients." + i + ".id");
+                    String password = prop.getProperty("clients." + i + ".password");
+                    String port = prop.getProperty("clients." + i + ".update_port");
+                    MEETINGS_FILE = prop.getProperty("server.storage.location");
+
+                    if (id != null && password != null && port != null) {
+                        clientCredentials.put(id, password);
+                        uuidToPort.put(id, Integer.parseInt(port));
+                        System.out.println("Loaded credentials for client ID: " + id);
+                    }
+                }
+
+                System.out.println("Loaded " + clientCredentials.size() + " client credentials");
+            } catch (IOException e) {
+                System.err.println("Error loading client credentials: " + e.getMessage());
+            }
         }
+
     }
 
     /**
@@ -470,19 +498,19 @@ public class ViewMyMeetingsServer {
                                                                     "100"));
 
             // Create and start server with configuration
-            ViewMyMeetingsServer server = new ViewMyMeetingsServer(port);
+            ViewMyMeetingsServer server = new ViewMyMeetingsServer(port, configPath);
             server.start();
 
         } catch (IOException e) {
             System.err.println("Error loading configuration: " + e.getMessage());
             System.err.println("Using default configuration...");
             // Fall back to default configuration
-            ViewMyMeetingsServer server = new ViewMyMeetingsServer(DEFAULT_PORT);
+            ViewMyMeetingsServer server = new ViewMyMeetingsServer(DEFAULT_PORT, CONFIG_FILE);
             server.start();
         } catch (NumberFormatException e) {
             System.err.println("Invalid port or backlog number in configuration: " + e.getMessage());
             System.err.println("Using default configuration...");
-            ViewMyMeetingsServer server = new ViewMyMeetingsServer(DEFAULT_PORT);
+            ViewMyMeetingsServer server = new ViewMyMeetingsServer(DEFAULT_PORT, CONFIG_FILE);
             server.start();
         }
     }

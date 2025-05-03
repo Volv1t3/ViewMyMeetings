@@ -10,7 +10,7 @@ version: '3.8'
 services:
   #? Defining the server, this is the name to which the Dockerfile that has the actual
   #? blueprint is located, here we define all the params it needs like volumnes or ports!
-  server: # Changed from view-my-meetings-server to server to match your code
+  server:
     build:
       #? 2.1 This right here is the context, this helps docker find the actual position of the Docker
       #? file.
@@ -37,39 +37,38 @@ services:
     #? creation policy of all clients
     environment:
       DUMMY_TO_AVOID_ERROR_MARK: "true"
-#      REGENERATE_CONFIG: "true"
-#      #Server configuration - comment out to use default configuration
-#      SERVER_ADDRESS: "0.0.0.0"
-#      SERVER_PORT: "8080"
-#      SERVER_BACKLOG: "100"
-#      CLIENTS_COUNT: "5"
-#      STORAGE_LOCATION: "/home/app/ViewMyMeetings/serverSideMeetings.json"
-#      #Client configurations - comment out to use default configuration
-#      CLIENT_0_NAME: "Santiago"
-#      CLIENT_0_ID: "C01A"
-#      CLIENT_0_PORT: "8082"
-#      CLIENT_0_PASSWORD: "12345"
-#      CLIENT_1_NAME: "Marco"
-#      CLIENT_1_ID: "C02A"
-#      CLIENT_1_PORT: "8084"
-#      CLIENT_1_PASSWORD: "23456"
-#      CLIENT_2_NAME: "Carlos"
-#      CLIENT_2_ID: "C03A"
-#      CLIENT_2_PORT: "8086"
-#      CLIENT_2_PASSWORD: "34567"
-#      CLIENT_3_NAME: "Joshua"
-#      CLIENT_3_ID: "C04A"
-#      CLIENT_3_PORT: "8088"
-#      CLIENT_3_PASSWORD: "45678"
-#      CLIENT_4_NAME: "Alejandro"
-#      CLIENT_4_ID: "C05A"
-#      CLIENT_4_PORT: "8090"
-#      CLIENT_4_PASSWORD: "56789"
+      REGENERATE_CONFIG: "true"
+      #Server configuration - comment out to use default configuration
+      SERVER_ADDRESS: "0.0.0.0"
+      SERVER_PORT: "8080"
+      SERVER_BACKLOG: "100"
+      CLIENTS_COUNT: "5"
+      STORAGE_LOCATION: "/home/app/ViewMyMeetings/serverSideMeetings.json"
+      #Client configurations - comment out to use default configuration
+      CLIENT_0_NAME: "Santiago"
+      CLIENT_0_ID: "C01A"
+      CLIENT_0_PORT: "8082"
+      CLIENT_0_PASSWORD: "12345"
+      CLIENT_1_NAME: "Marco"
+      CLIENT_1_ID: "C02A"
+      CLIENT_1_PORT: "8084"
+      CLIENT_1_PASSWORD: "23456"
+      CLIENT_2_NAME: "Carlos"
+      CLIENT_2_ID: "C03A"
+      CLIENT_2_PORT: "8086"
+      CLIENT_2_PASSWORD: "34567"
+      CLIENT_3_NAME: "Joshua"
+      CLIENT_3_ID: "C04A"
+      CLIENT_3_PORT: "8088"
+      CLIENT_3_PASSWORD: "45678"
+      CLIENT_4_NAME: "Alejandro"
+      CLIENT_4_ID: "C05A"
+      CLIENT_4_PORT: "8090"
+      CLIENT_4_PASSWORD: "56789"
     #? 2.6 This defines the volumes for this, it tells docker that a) the first declaration is an identifier for the foldeer
     #? defined. And b), that the user profile folder in documents under that name is to be mapped to this internal storage
     #? creating an orchestration to handle data storage.
     volumes:
-      - server_data:/home/app/ViewMyMeetings
       - ${USERPROFILE}/Documents/ViewMyMeetings/Server:/home/app/ViewMyMeetings
     restart: unless-stopped
 
@@ -88,7 +87,7 @@ services:
       - ${USERPROFILE}/Documents/ViewMyMeetings/Clients/client-one:/home/app/ViewMyMeetingsClient
     environment:
       FORCE_CONFIG_UPDATE: "true"
-      SERVER_HOST: "server"  # Now correctly using "server" to match your code
+      SERVER_HOST: "server"
       SERVER_PORT: "8080"
       CLIENT_NAME: "Santiago"
       CLIENT_ID: "C01A"
