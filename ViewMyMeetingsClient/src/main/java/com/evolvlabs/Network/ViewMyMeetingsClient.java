@@ -45,7 +45,7 @@ import org.msgpack.core.annotations.Nullable;
  */
 public class ViewMyMeetingsClient {
     
-    private static final String DEFAULT_HOST = "localhost";
+    private static final String DEFAULT_HOST = "server";
     private static final int DEFAULT_PORT = 8080;
     private static final String CONFIG_FILE = "clientConfiguration.properties";
     private static String LOCAL_MEETINGS_FILE = "clientMeetings.json";
@@ -118,7 +118,7 @@ public class ViewMyMeetingsClient {
      * @see #registerShutdownHook()
      */
     public ViewMyMeetingsClient(Properties config) {
-        this.host = config.getProperty("server.host", "0.0.0.0");
+        this.host = config.getProperty("server.host", "server");
         this.port = Integer.parseInt(config.getProperty("server.port", "8080"));
         this.updateListenerExecutor = Executors.newSingleThreadExecutor();
         this.localMeetings = new ArrayList<>();

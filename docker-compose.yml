@@ -1,0 +1,197 @@
+#? First ever docker compose file I writE!
+#? Santiago Arellano 00328370
+#? May god help this project work out, it works on my machine, I hope it will do on yours too!
+
+#? 1. Defining the docker compose version to use, this is marked as obsolete in the documentation
+#? but for sake of following the tutorial I am following I will keep this here!
+version: '3.8'
+
+#?2 Here we define all services that our system will export, the first one I want to define is the server
+services:
+  #? Defining the server, this is the name to which the Dockerfile that has the actual
+  #? blueprint is located, here we define all the params it needs like volumnes or ports!
+  server:  # Changed from view-my-meetings-server to server to match your code
+    build:
+      #? 2.1 This right here is the context, this helps docker find the actual position of the Docker
+      #? file.
+      context: ./ViewMyMeetingsServer
+      dockerfile: Dockerfile
+    #? 2.2 This is my image! This is located on my public repository for this project
+    image: arellanosantiago/view-my-meetings:server-latest
+    #? 2.3 This is the container name, I want to keep it normal so I will follow the same name as the service!
+    container_name: view-my-meetings-server  # Container name can remain the same
+    #? 2.4 This defines the ports, as we know the configuration is already in store for the ports, so we export them, if
+    #? you want to modify this, then I suggest modifying here and on the environment variables
+    ports:
+      - "8080:8080"  # Main server port
+      - "8082:8082"  # Client 0 update port
+      - "8084:8084"  # Client 1 update port
+      - "8086:8086"  # Client 2 update port
+      - "8088:8088"  # Client 3 update port
+      - "8090:8090"  # Client 4 update port
+    networks:
+      - app-network
+    #? 2.5 here youi can also change the enviroment variables in the container, I am leaving this commmented out,
+    #? but if you change this
+    #? and the port section, you should be able to set up your own clients, provided you also change the
+    #? creation policy of all clients
+    environment:
+      DUMMY_TO_AVOID_ERROR_MARK: "true"
+      # Optional: Set to true to regenerate config from these environment variables
+      # REGENERATE_CONFIG: "true"
+      # Server configuration - comment out to use default configuration
+      # SERVER_ADDRESS: "0.0.0.0"
+      # SERVER_PORT: "8080"
+      # SERVER_BACKLOG: "100"
+      # CLIENTS_COUNT: "5"
+      # STORAGE_LOCATION: "/home/app/ViewMyMeetings/serverSideMeetings.json"
+      # Client configurations - comment out to use default configuration
+      # CLIENT_0_NAME: "Santiago"
+      # CLIENT_0_ID: "C01A"
+      # CLIENT_0_PORT: "8082"
+      # CLIENT_0_PASSWORD: "12345"
+      # CLIENT_1_NAME: "Marco"
+      # CLIENT_1_ID: "C02A"
+      # CLIENT_1_PORT: "8084"
+      # CLIENT_1_PASSWORD: "23456"
+      # CLIENT_2_NAME: "Carlos"
+      # CLIENT_2_ID: "C03A"
+      # CLIENT_2_PORT: "8086"
+      # CLIENT_2_PASSWORD: "34567"
+      # CLIENT_3_NAME: "Joshua"
+      # CLIENT_3_ID: "C04A"
+      # CLIENT_3_PORT: "8088"
+      # CLIENT_3_PASSWORD: "45678"
+      # CLIENT_4_NAME: "Alejandro"
+      # CLIENT_4_ID: "C05A"
+      # CLIENT_4_PORT: "8090"
+      # CLIENT_4_PASSWORD: "56789"
+    #? 2.6 This defines the volumes for this, it tells docker that a) the first declaration is an identifier for the foldeer
+    #? defined. And b), that the user profile folder in documents under that name is to be mapped to this internal storage
+    #? creating an orchestration to handle data storage.
+    volumes:
+      - server_data:/home/app/ViewMyMeetings
+      - ${USERPROFILE}/Documents/ViewMyMeetings/Server:/home/app/ViewMyMeetings
+    restart: unless-stopped
+
+  #? 3. Lets create the clients
+  client-one:
+    build:
+      context: ./ViewMyMeetingsClient
+      dockerfile: Dockerfile
+    image: arellanosantiago/view-my-meetings:client-latest
+    container_name: view-my-meetings-client-one
+    depends_on:
+      - server
+    networks:
+      - app-network
+    volumes:
+      - ${USERPROFILE}/Documents/ViewMyMeetings/Clients/client-one:/home/app/ViewMyMeetingsClient
+    environment:
+      SERVER_HOST: "server"  # Now correctly using "server" to match your code
+      SERVER_PORT: "8080"
+      CLIENT_NAME: "Santiago"
+      CLIENT_ID: "C01A"
+      CLIENT_PASSWORD: "12345"
+    restart: unless-stopped
+    #? This allows for the container to become interactive whihc allows us to input content!!!
+    tty: true
+    stdin_open: true
+
+  client-two:
+    build:
+      context: ./ViewMyMeetingsClient
+      dockerfile: Dockerfile
+    image: arellanosantiago/view-my-meetings:client-latest
+    container_name: view-my-meetings-client-two
+    depends_on:
+      - server
+    networks:
+      - app-network
+    volumes:
+      - ${USERPROFILE}/Documents/ViewMyMeetings/Clients/client-two:/home/app/ViewMyMeetingsClient
+    environment:
+      SERVER_HOST: "server"
+      SERVER_PORT: "8080"
+      CLIENT_NAME: "Marco"
+      CLIENT_ID: "C02A"
+      CLIENT_PASSWORD: "23456"
+    restart: unless-stopped
+    tty: true
+    stdin_open: true
+
+  client-three:
+    build:
+      context: ./ViewMyMeetingsClient
+      dockerfile: Dockerfile
+    image: arellanosantiago/view-my-meetings:client-latest
+    container_name: view-my-meetings-client-three
+    depends_on:
+      - server
+    networks:
+      - app-network
+    volumes:
+      - ${USERPROFILE}/Documents/ViewMyMeetings/Clients/client-three:/home/app/ViewMyMeetingsClient
+    environment:
+      SERVER_HOST: "server"
+      SERVER_PORT: "8080"
+      CLIENT_NAME: "Carlos"
+      CLIENT_ID: "C03A"
+      CLIENT_PASSWORD: "34567"
+    restart: unless-stopped
+    tty: true
+    stdin_open: true
+
+  client-four:
+    build:
+      context: ./ViewMyMeetingsClient
+      dockerfile: Dockerfile
+    image: arellanosantiago/view-my-meetings:client-latest
+    container_name: view-my-meetings-client-four
+    depends_on:
+      - server
+    networks:
+      - app-network
+    volumes:
+      - ${USERPROFILE}/Documents/ViewMyMeetings/Clients/client-four:/home/app/ViewMyMeetingsClient
+    environment:
+      SERVER_HOST: "server"
+      SERVER_PORT: "8080"
+      CLIENT_NAME: "Joshua"
+      CLIENT_ID: "C04A"
+      CLIENT_PASSWORD: "45678"
+    restart: unless-stopped
+    tty: true
+    stdin_open: true
+
+  client-five:
+    build:
+      context: ./ViewMyMeetingsClient
+      dockerfile: Dockerfile
+    image: arellanosantiago/view-my-meetings:client-latest
+    container_name: view-my-meetings-client-five
+    depends_on:
+      - server
+    networks:
+      - app-network
+    volumes:
+      - ${USERPROFILE}/Documents/ViewMyMeetings/Clients/client-five:/home/app/ViewMyMeetingsClient
+    environment:
+      SERVER_HOST: "server"
+      SERVER_PORT: "8080"
+      CLIENT_NAME: "Alejandro"
+      CLIENT_ID: "C05A"
+      CLIENT_PASSWORD: "56789"
+    restart: unless-stopped
+    tty: true
+    stdin_open: true
+
+# Define volumes
+volumes:
+  server_data:
+    name: view-my-meetings_server_data
+
+# Define networks
+networks:
+  app-network:
+    driver: bridge
