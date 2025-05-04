@@ -92,13 +92,13 @@ RUN echo '#!/bin/bash' > /app/entrypoint.sh && \
     echo '      eval CLIENT_PORT=\${CLIENT_${i}_PORT}' >> /app/entrypoint.sh && \
     echo '      eval CLIENT_PASSWORD=\${CLIENT_${i}_PASSWORD}' >> /app/entrypoint.sh && \
     echo '' >> /app/entrypoint.sh && \
-    echo '      cat >> /home/app/ViewMyMeetings/serverConfiguration.properties << '"'"'EOL'"'"'' >> /app/entrypoint.sh && \
+    echo '      cat >> /home/app/ViewMyMeetings/serverConfiguration.properties << EOL' >> /app/entrypoint.sh && \
     echo '' >> /app/entrypoint.sh && \
-    echo '# Client ${i}' >> /app/entrypoint.sh && \
-    echo "clients.${i}.name=\${CLIENT_NAME}" >> /app/entrypoint.sh && \
-    echo "clients.${i}.id=\${CLIENT_ID}" >> /app/entrypoint.sh && \
-    echo "clients.${i}.update_port=\${CLIENT_PORT}" >> /app/entrypoint.sh && \
-    echo "clients.${i}.password=\${CLIENT_PASSWORD}" >> /app/entrypoint.sh && \
+    echo '# Client $i' >> /app/entrypoint.sh && \
+    echo 'clients.$i.name=$CLIENT_NAME' >> /app/entrypoint.sh && \
+    echo 'clients.$i.id=$CLIENT_ID' >> /app/entrypoint.sh && \
+    echo 'clients.$i.update_port=$CLIENT_PORT' >> /app/entrypoint.sh && \
+    echo 'clients.$i.password=$CLIENT_PASSWORD' >> /app/entrypoint.sh && \
     echo 'EOL' >> /app/entrypoint.sh && \
     echo '    done' >> /app/entrypoint.sh && \
     echo '  else' >> /app/entrypoint.sh && \
@@ -149,15 +149,9 @@ RUN echo '#!/bin/bash' > /app/entrypoint.sh && \
     echo 'echo "Server configuration:"' >> /app/entrypoint.sh && \
     echo 'cat /home/app/ViewMyMeetings/serverConfiguration.properties' >> /app/entrypoint.sh && \
     echo '' >> /app/entrypoint.sh && \
-    # Added these lines to simulate a stop, allowing for the file system to synchronize before starting the server
-    echo 'sync' >> /app/entrypoint.sh && \
-    echo 'sleep 1' >> /app/entrypoint.sh && \
-    echo 'echo "Verifying configuration file..."' >> /app/entrypoint.sh && \
-    echo 'ls -l /app/serverConfiguration.properties' >> /app/entrypoint.sh && \
-    echo 'echo "File contents:"' >> /app/entrypoint.sh && \
-    echo 'cat /app/serverConfiguration.properties' >> /app/entrypoint.sh && \
-    echo 'exec java -jar /app/ViewMyMeetings-1.0-Generated.jar /app/serverConfiguration.properties' >> /app/entrypoint.sh && \
+    echo 'exec java -jar /app/ViewMyMeetings-1.0-Generated.jar "$@"' >> /app/entrypoint.sh && \
     chmod +x /app/entrypoint.sh
 
 # 9. Definimos el comando de inicio
 ENTRYPOINT ["/app/entrypoint.sh"]
+CMD ["/home/app/ViewMyMeetings/serverConfiguration.properties"]
